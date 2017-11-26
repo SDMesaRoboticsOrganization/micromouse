@@ -34,6 +34,7 @@ long positionRight = -999;
 double ir_difference;
 int right_rotations;
 int left_rotations;
+int deadZone = 1;
 
 
 void setup()
@@ -85,7 +86,54 @@ void setup()
 void loop()
 {
   calc_dist_diff();
+  turn();
+}
 
+
+void turn()
+{
+  int turn_speed = 1;
+  int turn_scalar = 25;
+  if(ir_difference > deadZone)
+  {
+    turn_left();
+  }
+  else if(ir_difference < -deadZone)
+  {
+    turn_right();
+  }
+}
+
+void turn_left()
+{
+  if(ir_difference > 9)
+  {
+    turn_speed = 3;
+  }
+  else if (ir_difference > 4)
+  {
+    turn_speed = 2;
+  }
+  
+  int motor_diff =  turn_scalar*turn_speed;
+  move(1, SPEED-motor_diff, 0);
+  move(0, SPEED, 0);
+}
+
+void turn_right()
+{
+  if(ir_difference < -9)
+  {
+    turn_speed = 3;
+  }
+  else if (ir_difference < -4)
+  {
+    turn_speed = 2;
+  }
+  
+  int motor_diff =  turn_scalar*turn_speed;
+  move(0, SPEED-motor_diff, 0);
+  move(1, SPEED, 0);
 }
 
 
@@ -150,7 +198,7 @@ void readLeftEncoder()
 {
   long newLeft;
   newLeft = knobLeft.read();
-  if (newLEft != positionLeft)
+  if (newLeft != positionLeft)
   {
     Serial.print(", Right = ");
     Serial.print(newLeft);
